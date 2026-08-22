@@ -1,0 +1,52 @@
+[Unit]
+Description=Airspy HF+ WSPR and FT8 receiver
+Wants=network-online.target time-sync.target
+After=network-online.target time-sync.target
+# Keep retrying if the receiver is absent at boot or USB power briefly drops.
+StartLimitIntervalSec=0
+
+[Service]
+Type=notify
+NotifyAccess=main
+User=airspyhf-wsprd
+Group=airspyhf-wsprd
+SupplementaryGroups=plugdev
+Environment=AIRSPYHF_WSPRD_CORE=/usr/local/bin/airspyhf-wsprd-core
+Environment=AIRSPYHF_WSPRD_RUNTIME_DIR=/run/airspyhf-wsprd
+# Keep upgraded installations working when an older EnvironmentFile lacks these.
+Environment=MODE=WSPR
+Environment=HEALTH_BIND=0.0.0.0
+Environment=HEALTH_PORT=8080
+EnvironmentFile=/etc/default/airspyhf-wsprd
+WorkingDirectory=/run/airspyhf-wsprd
+RuntimeDirectory=airspyhf-wsprd
+RuntimeDirectoryMode=0750
+ExecStart=/usr/local/bin/airspyhf-wsprd --mode ${MODE} -b ${BAND} -c ${CALLSIGN} -g ${GRID} -e ${HEALTH_BIND} -P ${HEALTH_PORT} $REPORTING $HOPPING $EXTRA_ARGS
+
+Restart=on-failure
+RestartSec=15s
+TimeoutStopSec=30s
+TimeoutStartSec=180s
+WatchdogSec=45s
+LimitCORE=0
+MemorySwapMax=0
+
+# The receiver needs host USB access, so PrivateDevices must remain disabled.
+NoNewPrivileges=true
+CapabilityBoundingSet=
+LockPersonality=true
+PrivateTmp=true
+ProtectControlGroups=true
+ProtectHome=true
+ProtectHostname=true
+ProtectKernelLogs=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectSystem=strict
+RemoveIPC=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+UMask=0027
+
+[Install]
+WantedBy=multi-user.target

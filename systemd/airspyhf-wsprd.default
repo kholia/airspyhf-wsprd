@@ -1,0 +1,20 @@
+# Receiver configuration. Do not add shell syntax; systemd reads this directly.
+MODE=WSPR
+BAND=20m
+CALLSIGN=N0CALL
+GRID=AA00aa
+
+# Safe commissioning default: spots are decoded but not uploaded. Remove -n only
+# after replacing N0CALL and AA00aa with the station's real callsign and grid.
+# WSPR reports to WSPRnet; FT8 reports to PSK Reporter.
+REPORTING=-n
+
+# Set to -Bauto for adaptive hopping: WSPR 10 minutes, FT8 2 minutes.
+HOPPING=
+
+# Read-only JSON status. Use 127.0.0.1 to keep it local, or port 0 to disable it.
+HEALTH_BIND=0.0.0.0
+HEALTH_PORT=8080
+
+# Examples: -s 0123456789abcdef  or  -l 0 for a strong-signal site
+EXTRA_ARGS=
